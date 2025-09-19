@@ -26,7 +26,6 @@ function eliminarMensajePorId (id_mensaje){
         console.log(mensaje.id, id_mensaje)
         console.log(Number(mensaje.id) === Number(id_mensaje))
         if(Number(mensaje.id) === Number(id_mensaje)){
-            console.log('hola')
             const posicion_mensaje = mensajes.indexOf(mensaje)
             mensajes.splice(posicion_mensaje, 1)
             return true
@@ -180,4 +179,30 @@ Cuando hagan click debe vaciarse la lista de mensajes
 Re-renderizar
 
 pro-tip: No guardar la lista de mensajes en una constante
+*/
+
+const eliminar_todo_btn = document.getElementById('delete-all-messages')
+function eliminarTodosLosMensajes(){
+    //cuando modificamos length estamos mutando el estado de la lista de mensajes
+    //Basicamente estamos vaciando la lista
+    mensajes.length = 0 //o podemos hacer mensajes = []
+    renderMessages()
+}
+eliminar_todo_btn.addEventListener(
+    'click',
+    eliminarTodosLosMensajes
+)
+
+
+
+/* 
+    Implementar en la funcion renderMessages()
+    Si la lista de mensajes esta vacia, el boton de eliminar todos los mensajes no se debe mostrar o debe estar deshabilitado, o debe estar deshabilitado
+
+    //Para deshabilitar
+    - eliminar_todo_btn.disabled = true
+
+    //Para quitar de la vista
+    - eliminar_todo_btn.classList.add('hidden')
+    - Solo podemos hacer esto si existe la clase hidden con display none, o visibility: hidden
 */
