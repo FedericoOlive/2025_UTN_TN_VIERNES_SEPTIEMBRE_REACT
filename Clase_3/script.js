@@ -1,6 +1,6 @@
 
 //MOOK: Datos de ejemplo
-const mensajes = [
+let mensajes = [
     {
         name: "Juan",
         content: 'Hola!',
@@ -172,3 +172,12 @@ CHAT_COMPONENT.ELEMENTS.FORM.addEventListener(
     'submit',
     handleSubmitNewMessage
 )
+
+
+/* 
+Buscar por id el delete-all-messages
+Cuando hagan click debe vaciarse la lista de mensajes
+Re-renderizar
+
+pro-tip: No guardar la lista de mensajes en una constante
+*/
