@@ -1,38 +1,48 @@
+/* 
+Una clase es una estructura que tiene JS para crear objetos
+ */
 
-//MOOK: Datos de ejemplo
-let mensajes = [
-    {
-        name: "Juan",
-        content: 'Hola!',
-        time: '16:01',
-        id: 1
-    },
-    {
-        name: "Maria",
-        content: 'Hola que tal juan!',
-        time: '16:03',
-        id: 2
-    },
-    {
-        name: "Juan",
-        content: 'Todo bien por suerte, y vos?',
-        time: '16:05',
-        id: 3
+class MessagesManager {
+    messages = []
+    
+    getMessages(){
+        return this.messages
     }
-]
 
-function eliminarMensajePorId (id_mensaje){
-    for(let mensaje of mensajes){
-        console.log(mensaje.id, id_mensaje)
-        console.log(Number(mensaje.id) === Number(id_mensaje))
-        if(Number(mensaje.id) === Number(id_mensaje)){
-            const posicion_mensaje = mensajes.indexOf(mensaje)
-            mensajes.splice(posicion_mensaje, 1)
-            return true
+    agregar(author, content){
+        
+        const fecha_actual = new Date()
+        const hora_actual = fecha_actual.getHours()
+        const minuto_actual = fecha_actual.getMinutes()
+        const time = `${hora_actual}:${minuto_actual}`
+        this.messages.push({
+            name: author,
+            content: content,
+            time: time,
+            id: this.messages.length + 1
+        })
+    }
+
+    eliminarPorId(id_mensaje){
+        for(let mensaje of this.messages){
+            if(Number(mensaje.id) === Number(id_mensaje)){
+                const posicion_mensaje = this.messages.indexOf(mensaje)
+                this.messages.splice(posicion_mensaje, 1)
+                return true
+            }
         }
+        return false
     }
-    return false
+
+    vaciar(){
+        this.messages = []
+    }
 }
+
+const messages_manager = new MessagesManager()
+
+
+
 
 
 /* const nombres = ['pepe', 'juan', 'maria']
@@ -50,13 +60,30 @@ const CHAT_COMPONENT = {
     ELEMENTS: {
         LIST: document.querySelector('#messages-list'),
         FORM: document.querySelector('#message-form'),
-        FORM_STATUS: document.querySelector('#form-status')
+        FORM_STATUS: document.querySelector('#form-status'),
+        DELETE_ALL: document.getElementById('delete-all-messages')
     }
 }
 
 function renderMessages (){
+    const mensajes = messages_manager.getMessages()
     //Quiero acumular todos los mensajes en la variable messages_string_HTML
     let messages_string_HTML = ''
+    /* 
+    if (mensajes.length == 0) {
+        eliminar_todo_btn.disabled = true
+    }
+    else{
+        eliminar_todo_btn.disabled = false
+    }    
+    */
+
+    if (mensajes.length === 0){
+        CHAT_COMPONENT.ELEMENTS.DELETE_ALL.classList.add('hidden')
+    }
+    else {
+        CHAT_COMPONENT.ELEMENTS.DELETE_ALL.classList.remove('hidden')
+    }
     for(const message of mensajes){
         const message_string_HTML = `
             <div>
@@ -88,7 +115,7 @@ function renderMessages (){
                 //Estamos llamando al valor de data-message-id attribute
                 //console.log(btn_accionado.dataset.messageId)
                 const id_mensaje = btn_accionado.dataset.messageId
-                const resultado = eliminarMensajePorId(id_mensaje)
+                const resultado = messages_manager.eliminarPorId(id_mensaje)
                 if(!resultado){
                     alert("Mensaje no se pudo eliminar")
                 }
@@ -104,17 +131,9 @@ function renderMessages (){
 renderMessages()
 
 function handleSubmitNewMessage (event){
-    //El formulario por defecto recarga la pagina
-    //Con preventDefault lo evitamos
     event.preventDefault()
 
-    //Que es event.target?
-    //el elemento que desencadeno el evento submit
-    //En este caso el event.target seria el <form></form> ya que es quien desencadeno el evento submit
-    //console.log(event.target)
 
-    //Puedo llamar a un cierto input por su atributo name, a partir del formulario
-    //console.log(event.target.message.value)
     const new_message = event.target.message.value
     const form_status = {
         ok: false, //Si hay o no error
@@ -133,29 +152,13 @@ function handleSubmitNewMessage (event){
         form_status.ok = true
         form_status.message = 'mensaje enviado'
 
-        //Creamos la fecha de envio del mensaje
-        const fecha_actual = new Date()
-        const hora_actual = fecha_actual.getHours()
-        const minuto_actual = fecha_actual.getMinutes()
+        messages_manager.agregar('Yo', new_message)
 
-        //Creamos el nuevo mensaje
-        const new_message_object = {
-            name: "Matias",
-            content: new_message,
-            id: mensajes.length + 1,
-            time: `${hora_actual}:${minuto_actual}`
-        }
-
-        //Agregamos el nuevo mensaje a la lista
-        mensajes.push(new_message_object)
-
-        //Como modificamos la lista de mensajes, debemos re-pintar (re-renderizar) la lista de mensajes
         renderMessages()
 
         event.target.reset()
     }
 
-    //Manejo de status de formulario
     if(form_status.ok){
         CHAT_COMPONENT.ELEMENTS.FORM_STATUS.classList.add('success')
         CHAT_COMPONENT.ELEMENTS.FORM_STATUS.classList.remove('error')
@@ -173,36 +176,12 @@ CHAT_COMPONENT.ELEMENTS.FORM.addEventListener(
 )
 
 
-/* 
-Buscar por id el delete-all-messages
-Cuando hagan click debe vaciarse la lista de mensajes
-Re-renderizar
-
-pro-tip: No guardar la lista de mensajes en una constante
-*/
-
 const eliminar_todo_btn = document.getElementById('delete-all-messages')
 function eliminarTodosLosMensajes(){
-    //cuando modificamos length estamos mutando el estado de la lista de mensajes
-    //Basicamente estamos vaciando la lista
-    mensajes.length = 0 //o podemos hacer mensajes = []
+    messages_manager.vaciar()
     renderMessages()
 }
 eliminar_todo_btn.addEventListener(
     'click',
     eliminarTodosLosMensajes
 )
-
-
-
-/* 
-    Implementar en la funcion renderMessages()
-    Si la lista de mensajes esta vacia, el boton de eliminar todos los mensajes no se debe mostrar o debe estar deshabilitado, o debe estar deshabilitado
-
-    //Para deshabilitar
-    - eliminar_todo_btn.disabled = true
-
-    //Para quitar de la vista
-    - eliminar_todo_btn.classList.add('hidden')
-    - Solo podemos hacer esto si existe la clase hidden con display none, o visibility: hidden
-*/
