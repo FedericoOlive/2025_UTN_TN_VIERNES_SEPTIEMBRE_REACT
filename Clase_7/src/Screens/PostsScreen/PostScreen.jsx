@@ -1,8 +1,42 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PostCard from '../../Components/PostCard/PostCard'
 
 const PostScreen = () => {
+    const [ post_list, setPostList ] = useState([])
+    //Asincronia
+    /* 
+    Que soluciona? 
+    La cantidad de outputs que podemos dar
 
+    Es la capacidad de delegar tareas bloqueantes para poder continuar la ejecucion del codigo hasta que dicha tarea sea resuelta y cuando esto suceda, poder seguir con ese flujo de codigo
+    */
+
+    //Promise
+    //Es un objeto que JS usa para resolver codigo asincronico
+    //Basicamente tiene un estado interno que marca el estado de la promesa
+    //Dicho estado puede ser 1 de estos 3:
+    // - Pending => La promesa esta pendiente a ser resuelta
+    // - Resolved => La promesa fue resuelta con exito
+    // - Rejected => La promesa no fue resuelta con exito
+
+    //Fetch nos permite hacer consultas HTTP
+    //Fetch es asincronica, por lo tanto los retornara una promesa
+    //hay que pasarle a fetch:
+    //-URL
+    //objeto de configuracion de consulta
+    async function cargarPosts () {
+        //Await indica que mi codigo se pause hasta que se resuelva la promesa
+        const respuesta = await fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'GET'
+            }
+        )
+        const data = await respuesta.json()
+       
+        console.log(data)
+    }
+    cargarPosts()
     const post_list_example = [
         {
             "userId": 1,
@@ -32,6 +66,7 @@ const PostScreen = () => {
 
     const lista_post_jsx = post_list_example.map(
         (post) => {
+            console.log('me ejecuto')
             return (
                 <PostCard title={post.title} body={post.body} id={post.id} userId={post.userId} />
             )
