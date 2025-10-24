@@ -1,8 +1,16 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PostCard from '../../Components/PostCard/PostCard'
 
 const PostScreen = () => {
-    const [ post_list, setPostList ] = useState([])
+    //Guardamos la respuesta del servidor
+    const [post_list, setPostList] = useState([])
+
+    //Guardamos el estado que indica si la consulta esta cargando o no
+    const [post_list_loding, setPostListLoding] = useState(false)
+
+    //Indica si hubo un error al resolver la consulta
+    const [post_list_error, setPostListError] = useState(false)
+
     //Asincronia
     /* 
     Que soluciona? 
@@ -24,19 +32,75 @@ const PostScreen = () => {
     //hay que pasarle a fetch:
     //-URL
     //objeto de configuracion de consulta
-    async function cargarPosts () {
-        //Await indica que mi codigo se pause hasta que se resuelva la promesa
-        const respuesta = await fetch(
-            'https://jsonplaceholder.typicode.com/posts',
-            {
-                method: 'GET'
-            }
-        )
-        const data = await respuesta.json()
-       
-        console.log(data)
+
+
+
+
+    async function cargarPosts() {
+        setPostListLoding(true)
+        try {
+            //Await indica que mi codigo se pause hasta que se resuelva la promesa
+            const respuesta = await fetch(
+                'https://jsonplaceholder.typicode.com/posts',
+                {
+                    method: 'GET'
+                }
+            )
+            //cargamos la respuesta como JSON
+            const data = await respuesta.json()
+
+            setPostList(data)
+        }
+        catch (error) {
+            console.error(error)
+            setPostListError(error)
+        }
+        finally{
+            setPostListLoding(false)
+        }
     }
-    cargarPosts()
+
+    const [isOpen, setIsOpen] = useState(true)
+
+    //useState maneja la recarga del componente
+    //useEffect maneja la recarga de una funcion
+
+    //Quiero que cargues esta funcion 1 sola vez
+    useEffect(
+        //El efecto
+        //Accion a ejecutar
+        () => {
+            console.log('Efecto')
+        },
+        //Array de dependencias
+        //Una lista de valores que cuando cambien haran que se vuelva a ejecutar la funcionalidad
+        //SI el array de dependencias esta vacio, entonces NO se volvera a ejecutar el efecto
+        [isOpen]
+    )
+    useEffect(
+        () => {
+            cargarPosts()
+        },
+        []
+    )
+    console.log('normal')
+
+    /* 
+    Usar los estados: 
+        post_list, 
+        post_list_error, 
+        post_list_loding
+    Para renderizar distintos status en la pantalla
+    Por ejemplo:
+        Si esta cargando debe decir cargando
+        Si hay respuesta el map debe mapear la respuesta
+        Si hay error mostrar por alerta el error.message
+
+    */
+    console.log(post_list, post_list_error, post_list_loding)
+
+
+
     const post_list_example = [
         {
             "userId": 1,
@@ -66,41 +130,48 @@ const PostScreen = () => {
 
     const lista_post_jsx = post_list_example.map(
         (post) => {
-            console.log('me ejecuto')
+
             return (
-                <PostCard title={post.title} body={post.body} id={post.id} userId={post.userId} />
+                <div>
+
+                    <PostCard title={post.title} body={post.body} id={post.id} userId={post.userId} />
+                </div>
             )
         }
     )
 
-    //JSX List
-    /* const list = [
-        <h1>Hola</h1>,
-        <h1>Hola</h1>,
-        <h1>Hola</h1>
-    ] */
 
-    //map metodo avanzado de arrays para transformar un array en otro array
-
-    /* const nombres = ['pepe', 'maria', 'juan']
-    const iniciales_nombres = nombres.map(
-        (nombre) => {
-
-            let letra_incial = nombre[0]
-            return letra_incial
-        }
-    ) */
-    //['p', 'm', 'j']
     return (
         <div>
             <h1>Posteos</h1>
             {/* 
         Aqui deberian llamar a <PostCard/>
         */}
-
+            <button onClick={() => { setIsOpen(!isOpen) }}>{isOpen ? 'Cerrar' : 'Abrir'}</button>
             {lista_post_jsx}
         </div>
     )
 }
 
 export default PostScreen
+
+
+//Se intenta ejecutar este bloque de codigo
+/*         try{
+            let nombre = 'adsdsa'
+            if(!nombre){
+                //Throw hace que se lance un error al catch mas cercano
+                throw {message: 'Nombre no esta definido', code: 1}
+            }
+            console.log('hola')
+            console.log(1 + b)
+        }
+        //Si dentro del bloque try ocurrio algun fallo, entonces se captura el fallo y se ejecuta el bloque catch
+        catch(error){
+            if(error.code){
+                alert('Ocurrio un error: ' + error.message)
+            }
+            else{
+                console.error('Ocurrio un error al sumar, Razon: ' + error.message)
+            }
+        } */
