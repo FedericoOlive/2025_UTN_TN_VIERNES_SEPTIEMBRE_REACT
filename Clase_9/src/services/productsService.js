@@ -24,7 +24,7 @@ async function getAllProducts (){
         }
     )
 
-    console.log(products)
+    return products
 }
 
 export {getAllProducts}

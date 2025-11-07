@@ -3,6 +3,7 @@ import Contador from './Components/Contador/Contador'
 import { Route, Routes } from 'react-router'
 import PostScreen from './Screens/PostsScreen/PostScreen'
 import { getAllProducts } from './services/productsService'
+import ProductsScreen from './Screens/ProductsScreen/ProductsScreen'
 
 function App() {
 
@@ -13,6 +14,7 @@ function App() {
       <Routes>
         {/* Si el path (direccion) matchea con '/posts' montame el componente <PostScreen/> */}
         <Route path='/posts' element={ <PostScreen/>} />
+        <Route path='/' element={<ProductsScreen />} />
       </Routes>
     </div>
 
