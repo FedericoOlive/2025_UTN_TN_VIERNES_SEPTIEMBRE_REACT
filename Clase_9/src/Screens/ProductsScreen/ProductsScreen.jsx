@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { getAllProducts } from '../../services/productsService'
 import useRequest from '../../hooks/useRequest'
+import ProductList from '../../Components/ProductList/ProductList'
 
 const ProductsScreen = () => {
     
@@ -32,18 +33,23 @@ const ProductsScreen = () => {
         "Error:", error
     )
 
-    /* sendRequest(
-        getAllProducts
-    ) */
 
-
-    //Ejemplo de estado
-    //const [isOpen, setIsOpen] = useState()
-    
 
     return (
-        <div>ProductsScreen</div>
+        <div>
+            <h1>Catalogo de productos</h1>
+            {
+                isLoading 
+                ? <span>Cargando...</span>
+                : (
+                    error 
+                    ? <span style={{color: 'red'}}>{error}</span> 
+                    : <ProductList products={response}/>
+                )
+            }
+        </div>
     )
 }
+
 
 export default ProductsScreen

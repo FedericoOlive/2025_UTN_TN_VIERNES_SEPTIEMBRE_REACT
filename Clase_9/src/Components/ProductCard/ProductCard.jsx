@@ -1,17 +1,15 @@
 import './ProductCard.css'
 
-function ProductCard(props) {
-
-    //props es un objeto
-
+function ProductCard({product}) {
 
     return (
 
         <div>
-            {1 + 1}
-            <h2>Tv samsung 52"</h2>
-            <p>Una Tv muy buena para ver el mundial</p>
-            <span>Precio $USD {props.price}</span>
+
+            <img src={product.imagen} />
+            <h2>{product.nombre}</h2>
+            <p>{product.description}</p>
+            <span>Precio $USD {product.precio}</span>
             <button className="btn-buy">Comprar</button>
             <hr />
         </div>
