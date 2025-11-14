@@ -1,4 +1,4 @@
-import React from 'react'
+
 import MessagesList from '../MessagesList/MessagesList'
 import CreateNewMessage from '../CreateNewMessage/CreateNewMessage'
 
